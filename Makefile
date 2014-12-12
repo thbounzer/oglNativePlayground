@@ -6,8 +6,8 @@ OS_X_OTHER_LIBS=-framework Cocoa -framework OpenGL -framework IOKit -framework C
 OS_X_FLAGS= -I/usr/local/Cellar/glfw3/3.0.4/include 
 
 
-snakeGL:
-	$(CC) $(CFLAGS) -o  $(GL_LIBS)
+playground:
+	$(CC) $(CFLAGS) -o bin/playground src/playground.c src/shaderLoader.c  $(GL_LIBS)
 
 clean:
 	rm -rf bin/*
