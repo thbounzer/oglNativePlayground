@@ -18,16 +18,16 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 void renderRedBackground();
 void renderMultiBackground(float time);
-void renderRedBckgWithShader(GLuint program);
-GLuint compileShaders(char *vertexShad, char *fragmentShad);
+void renderBlackBckgWithShader(GLuint program);
+GLuint compileShader(char *shaderSource, GLint shaderType);
 GLuint checkShaderCompilation(GLint shaderId,char *type);
 
 char* fragmentFile = "/home/carlo/Documents/Sources/Various/oglNativePlayground/shaders/fragmentOne.glsl";
-char* vertexFile = "/home/carlo/Documents/Sources/Various/oglNativePlayground/shaders/vertexOne.glsl";
+char* vertexFile = "/home/carlo/Documents/Sources/Various/oglNativePlayground/shaders/basicTriangle.glsl";
 
 int main(void){
     GLFWwindow* window;
-    GLuint program, voa; 
+    GLuint program, voa, vertexShaderId, fragmentShaderId; 
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
         exit(EXIT_FAILURE);
@@ -43,17 +43,19 @@ int main(void){
     }
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
-    program = compileShaders(vertexFile,fragmentFile);
+    vertexShaderId = compileShader(vertexFile,GL_VERTEX_SHADER);
+    fragmentShaderId = compileShader(fragmentFile,GL_FRAGMENT_SHADER);
+    program = compileProgram(vertexShaderId,fragmentShaderId);
     glGenVertexArrays(1, &voa);
     glBindVertexArray(voa);
-    glPointSize(40.0f);
+    
     while (!glfwWindowShouldClose(window))
     {
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
-        renderRedBckgWithShader(program);
+        renderBlackBckgWithShader(program);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -70,11 +72,11 @@ void renderRedBackground(){
     glClearBufferfv(GL_COLOR,0,red);
 }
 
-void renderRedBckgWithShader(GLuint program){
+void renderBlackBckgWithShader(GLuint program){
     static const GLfloat black[] = {0.0f, 0.0f, 0.0f, 1.0f};
     glClearBufferfv(GL_COLOR,0,black);
     glUseProgram(program);
-    glDrawArrays(GL_POINTS, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void renderMultiBackground(float time){
@@ -82,37 +84,40 @@ void renderMultiBackground(float time){
     glClearBufferfv(GL_COLOR,0,color);    
 }
 
-GLuint compileShaders(char *vertexShadFilePath, char *fragmentShadFilePath){
-    GLuint vertexShaderId;
-    GLuint fragmentShaderId;
-    GLuint program, logSize;
+GLuint compileShader(char *shaderFilePath, GLint shaderType){
+    GLuint shaderId;
+    char *shaderTypeName;
+    switch(shaderType){
+        case GL_VERTEX_SHADER:
+            shaderTypeName = "vertex";
+        break;
+        case GL_FRAGMENT_SHADER:
+            shaderTypeName = "fragment";
+        break;
+        default:
+            return NULL;    /*unsupported shader type*/
+    }    
+    GLchar *shaderSource = loadShader(shaderFilePath);
+    printf("%s Shader:\n",shaderTypeName);
+    puts(shaderSource);
     
-    GLchar *vertexShader = loadShader(vertexShadFilePath);
-    GLchar *fragmentShader = loadShader(fragmentShadFilePath);
-    
-    vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShaderId, 1, &vertexShader, NULL);
-    glCompileShader(vertexShaderId);
-    checkShaderCompilation(vertexShaderId,"vertex");
+    shaderId = glCreateShader(shaderType);
+    glShaderSource(shaderId, 1, &shaderSource, NULL);
+    glCompileShader(shaderId);
+    checkShaderCompilation(shaderId,shaderTypeName);
+    free(shaderSource);
+    return shaderId;
+}
 
-    
-    fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShaderId, 1, &fragmentShader, NULL);
-    glCompileShader(fragmentShaderId);
-
-    checkShaderCompilation(fragmentShaderId,"fragment");
-    
-     
+GLint compileProgram(GLint vertexShaderId, GLint fragmentShaderId){
+    GLint program;
     program = glCreateProgram();
     glAttachShader(program,vertexShaderId);
     glAttachShader(program,fragmentShaderId);
     glLinkProgram(program);
-    
-    
+
     glDeleteShader(vertexShaderId);
-    glDeleteShader(fragmentShaderId);
-    free(vertexShader);
-    free(fragmentShader);    
+    glDeleteShader(fragmentShaderId); 
     return program;
 }
 
