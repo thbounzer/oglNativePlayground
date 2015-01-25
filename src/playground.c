@@ -22,9 +22,18 @@ void renderBlackBckgWithShader(GLuint program);
 GLuint compileShader(char *shaderSource, GLint shaderType);
 GLuint checkShaderCompilation(GLint shaderId,char *type);
 
-char* fragmentFile = "/home/carlo/Documents/Sources/Various/oglNativePlayground/shaders/fragmentOne.glsl";
-char* vertexFile = "/home/carlo/Documents/Sources/Various/oglNativePlayground/shaders/basicTriangle.glsl";
 
+#ifdef __APPLE__ && __MACH__
+    char* fragmentFile = "/Users/thbounzer/Documents/Sources/C/oglNativePlayground/shaders/fragmentOne.glsl";
+    char* vertexFile = "/Users/thbounzer/Documents/Sources/C/oglNativePlayground/shaders/basicTriangle.glsl";
+#elif __linux__
+    char* fragmentFile = "/home/thbounzer/Documents/Sources/C/oglNativePlayground/shaders/fragmentOne.glsl";
+    char* vertexFile = "/home/thbounzer/Documents/Sources/C/oglNativePlayground/shaders/basicTriangle.glsl";
+#else
+    
+#endif
+    
+    
 int main(void){
     GLFWwindow* window;
     GLuint program, voa, vertexShaderId, fragmentShaderId; 
