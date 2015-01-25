@@ -9,6 +9,10 @@ OS_X_FLAGS= -I/usr/local/Cellar/glfw3/3.0.4/include
 playground:
 	$(CC) $(CFLAGS) -o bin/playground src/playground.c src/shaderLoader.c  $(GL_LIBS)
 
+
+macos:
+	$(CC) $(CFLAGS) -o bin/playground src/playground.c src/shaderLoader.c $(OS_GL_LIBS) $(OS_X_OTHER_LIBS) $(OS_X_OTHER_FLAGS)
+
 clean:
 	rm -rf bin/*
 
