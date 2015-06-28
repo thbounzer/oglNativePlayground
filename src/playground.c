@@ -64,7 +64,7 @@ int main(void){
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
-        renderBlackBckgWithShader(program);
+        renderBlackBgWithTriangleMoving(program);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
