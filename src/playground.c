@@ -19,6 +19,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 void renderRedBackground();
 void renderMultiBackground(float time);
 void renderBlackBckgWithShader(GLuint program);
+void renderBlackBgWithTriangleMoving(GLuint program);
 
 
 #ifdef __APPLE__ && __MACH__
