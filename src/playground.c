@@ -88,6 +88,15 @@ void renderBlackBckgWithShader(GLuint program){
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
+void renderBlackBgWithTriangleMoving(GLuint program){
+    static const GLfloat black[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    GLfloat position[] = {(float) sin(glfwGetTime())*0.5f, (float) cos(glfwGetTime())*0.6f,0.0f, 0.0f };
+    glClearBufferfv(GL_COLOR,0,black);
+    glUseProgram(program);
+    glVertexAttrib4fv(0,position);
+    glDrawArrays(GL_TRIANGLES, 0, 3);    
+}
+
 void renderMultiBackground(float time){
     GLfloat color[] = {sin(time), cos(time), 0.0f, 1.0f};
     glClearBufferfv(GL_COLOR,0,color);    
